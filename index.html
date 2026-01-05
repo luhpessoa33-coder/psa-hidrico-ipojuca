@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSAH-PE Ipojuca | Inteligência Territorial</title>
-    
+    <title>PSAH-PE Ipojuca | Inteligência e Governança Territorial</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="assets/css/style.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top shadow-lg">
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-lg" id="mainNav">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#" id="mainLogo">
-            <i class="fas fa-water"></i> PSAH-PE <span class="fw-light">IPOJUCA</span>
-        </a>
-        <div class="d-flex align-items-center gap-3">
-            <div id="eventWidget" class="badge bg-warning text-dark d-none">Evento: Seminário de Gestão Hídrica 2026</div>
-            <button class="btn btn-sm btn-outline-light" onclick="abrirLoginMaster()"><i class="fas fa-lock"></i> Acesso Restrito</button>
+        <div id="logoUploadArea" class="me-3">
+            <img src="" id="siteLogo" alt="Logo" class="d-none" style="height: 45px;">
+            <i class="fas fa-seedling fs-3 text-white" id="defaultLogo"></i>
+        </div>
+        <a class="navbar-brand fw-bold" href="#">PSAH-PE <span class="fw-light">IPOJUCA</span></a>
+        
+        <div class="ms-auto d-flex align-items-center gap-3">
+            <div id="eventWidget" class="badge bg-warning text-dark d-none shadow-sm p-2"></div>
+            <button class="btn btn-sm btn-outline-light" onclick="abrirLogin()"><i class="fas fa-user-shield"></i> Portal de Acesso</button>
         </div>
     </div>
 </nav>
@@ -32,48 +31,80 @@
         <aside class="col-lg-2">
             <div id="sidebarWidgets" class="sticky-top" style="top: 80px;">
                 </div>
+            <div id="adminTools" class="d-none mt-4 p-3 bg-white rounded shadow-sm border-start border-4 border-warning">
+                <h6>Painel Master</h6>
+                <button class="btn btn-xxs btn-outline-dark w-100 mb-1" onclick="triggerLogoUpload()">Alterar Logo</button>
+                <button class="btn btn-xxs btn-outline-dark w-100" onclick="editEventWidget()">Anunciar Evento</button>
+            </div>
         </aside>
 
         <main class="col-lg-10">
-            <ul class="nav nav-pills mb-3 bg-white p-2 rounded shadow-sm" id="pills-tab" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-sig">Mapa Interativo</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-ahp">Calculadora AHP</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-manual">Manual Técnico</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-downloads">Downloads</button></li>
+            <ul class="nav nav-tabs border-0 mb-3 bg-white rounded shadow-sm" id="govTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-sig">SIG Profissional</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-ahp">Calculadora AHP Pro</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-dados">Estatística & Tabelas</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-manual">Manual & Relatórios</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-downloads">Downloads</button></li>
             </ul>
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="tab-sig">
-                    <div class="card border-0 shadow-sm p-2 bg-white">
-                        <div id="map" style="height: 600px; border-radius: 8px;"></div>
-                        <div class="mt-3 d-flex gap-2">
-                            <button class="btn btn-sm btn-primary" onclick="syncArcGIS()">Sincronizar ArcGIS Online</button>
-                            <button class="btn btn-sm btn-success" onclick="syncMapbiomas()">Mapbiomas Col. 8.0</button>
-                            <button class="btn btn-sm btn-danger" onclick="solicitarAnaliseMCDA()">Solicitar Análise de Sensibilidade</button>
+                    <div class="card border-0 shadow-sm p-2">
+                        <div id="map" class="rounded shadow-inner" style="height: 600px;"></div>
+                        <div class="mt-3 p-2 bg-dark rounded d-flex gap-2 flex-wrap">
+                            <button class="btn btn-sm btn-outline-info" onclick="syncArcGIS()">Sync ArcGIS Online</button>
+                            <button class="btn btn-sm btn-outline-success" onclick="syncMapbiomas()">Mapbiomas 8.0</button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="requestMCDA()">Solicitar Análise MCDA</button>
+                            <div class="vr bg-white mx-2"></div>
+                            <input type="file" id="geoUpload" class="d-none" onchange="processGeoImage(event)">
+                            <button class="btn btn-sm btn-primary" onclick="document.getElementById('geoUpload').click()">Localizar Imagem SIG</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="tab-pane fade" id="tab-ahp">
                     <div class="card p-4 border-0 shadow-sm">
-                        <h4>Demonstração Matemática (Método Saaty)</h4>
-                        <div id="ahpMatrix" class="table-responsive my-4">
-                            </div>
-                        <div class="bg-light p-3 border rounded small font-monospace" id="ahpCalculations">
-                            Aguardando dados para demonstração de autovetores e Razão de Consistência (RC)...
+                        <h3>Matriz de Comparação Pareada (Saaty)</h3>
+                        <div id="ahpUI" class="table-responsive my-4"></div>
+                        <div id="ahpMathOutput" class="p-3 bg-light border rounded small font-monospace shadow-inner">
+                            Aguardando entradas para cálculo de CI, RI e Razão de Consistência (RC)...
                         </div>
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="tab-downloads">
-                    <div class="card p-4 border-0 shadow-sm">
-                        <div id="adminOnlyUpload" class="d-none mb-3">
-                            <h6>Upload de Documentos Oficiais (Apenas Admin)</h6>
-                            <input type="file" class="form-control mb-2" id="newDocFile">
-                            <button class="btn btn-warning btn-sm" onclick="uploadDoc()">Publicar Documento</button>
-                        </div>
-                        <div id="publicFileList" class="row g-3">
+                <div class="tab-pane fade" id="tab-dados">
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <div class="card p-3 border-0 shadow-sm">
+                                <h6>Dados de Priorização Territorial</h6>
+                                <div id="tableContainer"></div>
                             </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="card p-3 border-0 bg-primary text-white shadow-sm" id="statsInterpretation">
+                                <h5>Resumo Estatístico (ArcGIS Style)</h5>
+                                <p class="small opacity-75">Interpretação automática dos cenários...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="tab-manual">
+                    <div class="card p-4 border-0 shadow-sm">
+                        <div class="row">
+                            <div class="col-md-4 border-end">
+                                <h6>Geração de Documentos Oficiais</h6>
+                                <select id="docType" class="form-select mb-3" onchange="toggleFormFields()">
+                                    <option value="manual">Manual Técnico de Execução</option>
+                                    <option value="relatorio">Relatório Técnico Ambiental</option>
+                                </select>
+                                <div id="formFields"></div>
+                                <button class="btn btn-success w-100 mt-3" onclick="gerarDocumentoFinal()">Gerar Documento ABNT</button>
+                            </div>
+                            <div class="col-md-8">
+                                <div id="manualPreview" class="abnt-page shadow-lg"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -81,22 +112,13 @@
     </div>
 </div>
 
-<div class="modal fade" id="loginModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark text-white">
-            <div class="modal-header border-secondary"><h5 class="modal-title">Acesso Seguro PSAH-PE</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <input type="text" id="userInput" class="form-control mb-2" placeholder="Usuário (Ex: luanapessoa)">
-                <input type="password" id="passInput" class="form-control mb-3" placeholder="Chave de Acesso">
-                <button class="btn btn-primary w-100" onclick="autenticarUsuario()">Entrar no Sistema</button>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="modal fade" id="loginModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content" id="loginContent"></div></div></div>
 
-<script src="assets/js/psa-core.js"></script>
-<script src="assets/js/ahp-math.js"></script>
-<script src="assets/js/admin.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="assets/js/psa-engine.js"></script>
+<script src="assets/js/ahp-engine.js"></script>
+<script src="assets/js/manual-engine.js"></script>
+<script src="assets/js/gov-admin.js"></script>
 </body>
 </html>
