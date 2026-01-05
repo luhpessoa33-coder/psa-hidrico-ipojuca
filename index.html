@@ -1,237 +1,335 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSAH-PE Ipojuca | Inteligência Territorial & Governança</title>
+    <title id="site-title">OmniEditor Diamond v12.4 | Academic Research Suite</title>
     
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <link href="assets/css/style.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-lg" id="dynamicNav">
-    <div class="container-fluid">
-        <div id="logoContainer" class="me-2 d-flex align-items-center">
-            <i class="fas fa-seedling fs-3 text-white" id="defaultIcon"></i>
-            <img src="" id="siteLogo" class="d-none" style="height: 40px; margin-right: 10px;">
-        </div>
-        <a class="navbar-brand fw-bold" href="#">PSAH-PE <span class="fw-light">IPOJUCA</span></a>
+    <style>
+        :root {
+            --sidebar-w: 440px;
+            --accent: #00d2ff;
+            --bg-dark: #080809;
+            --bg-panel: #111113;
+            --bg-card: #1a1a1d;
+            --text-main: #f4f4f5;
+            --abnt-font: 'Arial', sans-serif;
+        }
+
+        body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Inter', sans-serif; overflow: hidden; margin: 0; }
         
-        <div class="ms-auto d-flex align-items-center gap-3">
-            <div id="eventPulse" class="badge bg-warning text-dark d-none animate-pulse shadow-sm">
-                <i class="fas fa-calendar-alt"></i> <span id="eventText">Evento Ativo</span>
-            </div>
-            <span id="userLevelBadge" class="badge bg-light text-dark d-none">Nível: Master</span>
-            <button class="btn btn-sm btn-outline-light" onclick="abrirPortal()"><i class="fas fa-user-lock"></i> Portal Master</button>
-        </div>
-    </div>
-</nav>
+        /* App Shell and Blur Logic */
+        .app-shell { display: flex; height: 100vh; filter: blur(12px); pointer-events: none; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .app-active { filter: blur(0); pointer-events: auto; }
 
-<div class="container-fluid mt-3">
-    <div class="row">
-        <aside class="col-lg-2">
-            <div id="widgetsArea" class="sticky-top" style="top: 80px;">
-                <div class="card p-3 mb-3 border-0 shadow-sm widget-card">
-                    <h6 class="small fw-bold">RESUMO DA BACIA</h6>
-                    <div class="display-6 text-primary">3.435</div>
-                    <small class="text-muted">km² de Área Total</small>
-                </div>
-            </div>
+        /* Ethics and Integrity Overlay */
+        #ethics-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.96);
+            display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px;
+        }
+        .ethics-card {
+            max-width: 650px; background: var(--bg-card); border: 2px solid var(--accent);
+            border-radius: 24px; padding: 40px; box-shadow: 0 0 60px rgba(0,210,255,0.3);
+        }
 
-            <div id="masterPanel" class="d-none mt-3 p-3 bg-white rounded shadow-sm border-warning border-start border-4">
-                <h6 class="small fw-bold text-uppercase mb-2 text-warning">Configurações Master</h6>
-                <button class="btn btn-xxs btn-outline-dark w-100 mb-1" onclick="document.getElementById('logoInput').click()">Trocar Logo</button>
-                <input type="file" id="logoInput" class="d-none" onchange="handleLogoUpload(event)">
-                <button class="btn btn-xxs btn-outline-dark w-100 mb-1" onclick="abrirModalEvento()">Editar Evento</button>
-                <button class="btn btn-xxs btn-outline-dark w-100 mb-1" onclick="abrirModalCores()">Customizar Cores</button>
-                <hr>
-                <button class="btn btn-xxs btn-danger w-100" onclick="confirmarLimpezaTotal()">Resetar Sistema</button>
-            </div>
-        </aside>
+        /* Sidebar Navigation */
+        aside { width: var(--sidebar-w); background: var(--bg-panel); border-right: 1px solid #27272a; display: flex; flex-direction: column; z-index: 100; }
+        .sidebar-header { padding: 20px; background: #000; border-bottom: 2px solid var(--accent); }
+        .nav-link { color: #71717a; border: none !important; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; padding: 15px 2px; }
+        .nav-link.active { background: transparent !important; color: var(--accent) !important; border-bottom: 2px solid var(--accent) !important; }
+        .tab-content { flex-grow: 1; overflow-y: auto; padding: 20px; }
 
-        <main class="col-lg-10">
-            <ul class="nav nav-tabs border-0 mb-3 bg-white p-1 rounded shadow-sm" id="tabMenu">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-sig">SIG Profissional</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-dashboard">Dashboard Executivo</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-ahp">Calculadora AHP</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-manual">Manual & Relatórios</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-metodologia">Biblioteca Técnica</button></li>
-                <li class="nav-item" id="adminTabLink" class="d-none"><button class="nav-link text-danger" data-bs-toggle="tab" data-bs-target="#tab-gestao">Governança</button></li>
+        /* Admin Visibility */
+        .admin-only { display: none !important; }
+        .is-admin .admin-only { display: block !important; }
+
+        /* Canvas ABNT (NBR 14724) */
+        #viewport { flex-grow: 1; background: #1c1c1e; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 20px 0; scroll-behavior: smooth; }
+        #toolbar-container { width: 210mm; background: #f8f9fa; border: 1px solid #ccc; position: sticky; top: 0; z-index: 1000; }
+        
+        #paper-canvas { 
+            width: 210mm; min-height: 297mm; background: #fff; 
+            padding: 30mm 20mm 20mm 30mm; /* ABNT Standards: Top 3, Left 3, Bottom 2, Right 2 */
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8); color: #000; position: relative; margin-bottom: 50px;
+        }
+        #editor { font-family: var(--abnt-font); font-size: 12pt; line-height: 1.5; border: 1px solid #ddd !important; min-height: 247mm; text-align: justify; }
+
+        /* UI Widgets */
+        .widget { background: var(--bg-card); border: 1px solid #2d2d30; border-radius: 12px; padding: 16px; margin-bottom: 15px; }
+        .timer-hero { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 900; color: #fbbf24; text-align: center; }
+        .ai-chat-box { height: 220px; background: #000; border-radius: 10px; padding: 12px; font-size: 0.75rem; overflow-y: auto; border: 1px solid #333; margin-bottom: 10px; }
+        .latex-guide { font-size: 0.65rem; background: #000; color: var(--accent); padding: 8px; border-radius: 8px; font-family: monospace; max-height: 120px; overflow-y: auto; }
+        .btn-search-item { font-size: 0.65rem; font-weight: bold; text-align: left; padding: 8px; margin-bottom: 4px; border-radius: 6px; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+</head>
+<body id="master-body">
+
+<div id="ethics-overlay">
+    <div class="ethics-card text-center">
+        <i class="fas fa-balance-scale fa-3x text-info mb-4"></i>
+        <h4 class="fw-bold text-white mb-3">Integridade Acadêmica e Ética em IA</h4>
+        <div class="text-start text-white-50 small mb-4" style="line-height: 1.7;">
+            <p>Para prosseguir, o pesquisador declara ciência dos seguintes termos:</p>
+            <ul>
+                <li>O OmniEditor integra IA para suporte gramatical e estrutural, mantendo a autoria humana obrigatória.</li>
+                <li>O plágio é combatido via rigorosa conferência de fontes e referências.</li>
+                <li>Toda pesquisa em bases externas deve ser devidamente citada conforme a NBR 10520.</li>
+                <li>Privacidade: Todos os dados residem apenas no seu navegador local.</li>
             </ul>
-
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="tab-sig">
-                    <div class="row g-2">
-                        <div class="col-lg-9">
-                            <div class="card border-0 shadow-sm p-1">
-                                <div id="map" style="height: 650px; border-radius: 8px;"></div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="card p-3 border-0 shadow-sm h-100 bg-dark text-white">
-                                <h6>Calculadora Raster Simples</h6>
-                                <p class="small text-white-50">Simule novos cenários combinando pesos.</p>
-                                <div class="mb-2">
-                                    <label class="x-small">Critério A</label>
-                                    <select id="raster1" class="form-select form-select-sm bg-secondary text-white border-0">
-                                        <option value="40.7">Nascentes (40.7)</option>
-                                        <option value="25.1">Cobertura (25.1)</option>
-                                    </select>
-                                </div>
-                                <div class="text-center my-1"><i class="fas fa-plus"></i></div>
-                                <div class="mb-3">
-                                    <label class="x-small">Critério B</label>
-                                    <select id="raster2" class="form-select form-select-sm bg-secondary text-white border-0">
-                                        <option value="14.6">Erodibilidade (14.6)</option>
-                                        <option value="6.5">Declividade (6.5)</option>
-                                    </select>
-                                </div>
-                                <button class="btn btn-primary btn-sm w-100" onclick="executarRasterMath()">Simular Sobreposição</button>
-                                <hr>
-                                <h6>SIG Externo</h6>
-                                <button class="btn btn-outline-info btn-sm w-100 mb-1" onclick="syncArcGIS()">ArcGIS Online Sync</button>
-                                <button class="btn btn-outline-success btn-sm w-100" onclick="syncMapbiomas()">Mapbiomas 8.0</button>
-                                <hr>
-                                <input type="file" id="geoUpload" class="d-none" onchange="processGeoImage(event)">
-                                <button class="btn btn-warning btn-sm w-100" onclick="document.getElementById('geoUpload').click()"><i class="fas fa-map-marker-alt"></i> Localizar Foto Campo</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="tab-dashboard">
-                    <div class="card p-4 border-0 shadow-sm">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4>Inteligência de Dados Territorial</h4>
-                            <div>
-                                <input type="file" id="csvInput" class="d-none" onchange="processarCSV(event)">
-                                <button class="btn btn-sm btn-success" onclick="document.getElementById('csvInput').click()"><i class="fas fa-file-csv"></i> Alimentar Base de Dados</button>
-                            </div>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <div class="table-responsive" style="max-height: 450px;">
-                                    <table class="table table-hover table-sm small border">
-                                        <thead class="table-dark sticky-top">
-                                            <tr><th>Município</th><th>Área Prioritária (km²)</th><th>Prioridade</th><th>% na Bacia</th></tr>
-                                        </thead>
-                                        <tbody id="csvTableBody"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div id="top10Ranking" class="p-3 bg-primary text-white rounded shadow-sm mb-3">
-                                    <h6>🏆 Top 10 Áreas Prioritárias</h6>
-                                    <p class="small opacity-75">Importe um CSV para ver o ranking das cidades mais críticas.</p>
-                                </div>
-                                <div class="card p-3 border-0 bg-white shadow-sm">
-                                    <h6 class="text-dark">Interpretação Estatística</h6>
-                                    <div id="statsInterpretation" class="small text-muted">Resultados gerados automaticamente com base no mosaico de prioridades.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="tab-ahp">
-                    <div class="card p-4 border-0 shadow-sm">
-                        <h5>Cálculo de Prioridades (Matriz de Saaty)</h5>
-                        <p class="text-muted small">Julgamentos paritários com validação científica de consistência.</p>
-                        <div id="ahpMatrixUI" class="table-responsive my-3"></div>
-                        <div id="ahpMathOutput" class="bg-light p-4 border rounded font-monospace small shadow-inner">
-                            Aguardando preenchimento da matriz para cálculo de Autovetores e Razão de Consistência (RC).
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="tab-manual">
-                    <div class="row g-4">
-                        <div class="col-md-4 border-end">
-                            <div class="card p-3 border-0 bg-dark text-white mb-3">
-                                <h6>Governança Documental</h6>
-                                <select id="docType" class="form-select form-select-sm mb-3" onchange="MANUAL_ENGINE.carregarModelo()">
-                                    <option value="manual">Manual Técnico de Execução</option>
-                                    <option value="relatorio">Relatório Técnico Ambiental</option>
-                                </select>
-                                <div id="formFields" class="bg-white p-3 border rounded text-dark overflow-auto" style="max-height: 400px;"></div>
-                                <hr>
-                                <button class="btn btn-success w-100" onclick="MANUAL_ENGINE.validarEExportar()"><i class="fas fa-file-pdf"></i> Gerar ABNT Final</button>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div id="manualPreview" class="abnt-page">
-                                </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="tab-metodologia">
-                    <div class="card p-4 border-0 shadow-sm">
-                        <h4>Referencial Metodológico</h4>
-                        <div class="accordion" id="metodologiaAccordion">
-                            <div class="accordion-item border-0 mb-2 shadow-sm">
-                                <h2 class="accordion-header"><button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#m1">Estratégia Geral de Priorização</button></h2>
-                                <div id="m1" class="accordion-collapse collapse show" data-bs-parent="#metodologiaAccordion">
-                                    <div class="accordion-body small text-muted">Carregando conteúdo...</div>
-                                </div>
-                            </div>
-                            </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="tab-gestao">
-                    <div class="row g-3">
-                        <div class="col-md-5">
-                            <div class="card p-3 border-0 shadow-sm border-start border-4 border-danger">
-                                <h6>Gestão de Acessos</h6>
-                                <div class="mb-2"><input type="text" id="uNome" class="form-control form-control-sm" placeholder="Nome Completo"></div>
-                                <div class="mb-2"><input type="text" id="uDoc" class="form-control form-control-sm" placeholder="CPF ou CNPJ"></div>
-                                <div class="mb-2"><input type="email" id="uEmail" class="form-control form-control-sm" placeholder="E-mail Institucional"></div>
-                                <select id="uNivel" class="form-select form-select-sm mb-3">
-                                    <option value="Consulta">Permissão: Consulta</option>
-                                    <option value="Editor">Permissão: Editor</option>
-                                    <option value="Master">Permissão: Master</option>
-                                </select>
-                                <button class="btn btn-danger btn-sm w-100" onclick="cadastrarUsuario()">Salvar no Sistema</button>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div class="card p-3 border-0 shadow-sm">
-                                <h6>Usuários Ativos</h6>
-                                <table class="table table-sm small"><tbody id="listaUsuariosAdmin"></tbody></table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+        </div>
+        <button class="btn btn-info w-100 fw-bold py-2" onclick="acceptEthics()">CONCORDO E DECLARO INTEGRIDADE</button>
     </div>
 </div>
 
-<div class="modal fade" id="loginModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark text-white border-warning">
-            <div class="modal-body p-4 text-center">
-                <i class="fas fa-user-shield fa-3x text-warning mb-3"></i>
-                <h5 class="mb-4">Portal de Governança Master</h5>
-                <input type="text" id="user" class="form-control mb-2" placeholder="Usuário">
-                <input type="password" id="pass" class="form-control mb-3" placeholder="Chave de Acesso">
-                <button class="btn btn-primary w-100" onclick="autenticar()">Entrar</button>
+<div class="app-shell" id="app-ui">
+    <aside>
+        <div class="sidebar-header d-flex justify-content-between align-items-center">
+            <div>
+                <h6 id="site-name-ui" class="mb-0 fw-bold text-info text-uppercase">OmniEditor Platinum</h6>
+                <small id="user-name-ui" class="text-white-50 x-small">Suite de Pesquisa v12.4</small>
+            </div>
+            <i class="fas fa-key text-secondary" style="cursor: pointer;" onclick="toggleAdmin()"></i>
+        </div>
+        
+        <ul class="nav nav-tabs nav-fill" id="mainTabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-sprint">Sprint</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-form">Dados</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-search">Busca</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-ai">IA & Ética</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab-sprint">
+                <div class="widget">
+                    <label class="x-small fw-bold text-warning mb-1 uppercase">Cronômetro de Entrega</label>
+                    <div id="timer" class="timer-hero">00:00:00</div>
+                    <div class="admin-only mt-2">
+                        <input type="datetime-local" id="deadline" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="save()">
+                    </div>
+                </div>
+                <h6 class="x-small fw-bold text-secondary uppercase mb-2 d-flex justify-content-between">Metas <button class="btn btn-xxs btn-info admin-only" onclick="addTask()">+</button></h6>
+                <div id="task-list"></div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-form">
+                <div class="widget">
+                    <h6 class="x-small fw-bold text-warning uppercase mb-3">Gerador de Capa ABNT</h6>
+                    <input type="text" id="meta-inst" class="form-control form-control-sm bg-dark text-white mb-2" placeholder="Instituição">
+                    <input type="text" id="meta-title" class="form-control form-control-sm bg-dark text-white mb-2" placeholder="Título">
+                    <input type="text" id="meta-author" class="form-control form-control-sm bg-dark text-white mb-3" placeholder="Autor">
+                    <button class="btn btn-xxs btn-info w-100 fw-bold" onclick="injectMetadata()">INJETAR CAPA</button>
+                </div>
+                <div class="widget admin-only">
+                    <h6 class="x-small fw-bold text-info mb-2 uppercase">Importador de Arquivo</h6>
+                    <input type="file" id="import-docx" class="form-control form-control-sm bg-dark text-white mb-2" accept=".docx" onchange="processDocx()">
+                    <button class="btn btn-xxs btn-outline-danger w-100" onclick="resetDB()">REDEFINIR SISTEMA</button>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-search">
+                <div class="input-group mb-3">
+                    <input type="text" id="q" class="form-control form-control-sm bg-dark text-white" placeholder="Termo de pesquisa...">
+                    <button class="btn btn-info btn-sm" onclick="runSearch()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="d-grid gap-1">
+                    <button class="btn btn-search-item btn-outline-light" onclick="go('scholar')">Google Scholar</button>
+                    <button class="btn btn-search-item btn-outline-light" onclick="go('scielo')">SciELO Brasil</button>
+                    <button class="btn btn-search-item btn-outline-light" onclick="go('bdtd')">Teses e Dissertações (Ibict)</button>
+                    <button class="btn btn-search-item btn-outline-light" onclick="go('capes')">Portal CAPES</button>
+                    <button class="btn btn-search-item btn-outline-light" onclick="go('ana')">Dados Hídricos (ANA)</button>
+                    <button class="btn btn-search-item btn-outline-light" onclick="go('perplexity')">Perplexity AI (Busca Inteligente)</button>
+                    <button class="btn btn-search-item btn-outline-light" onclick="go('pubmed')">PubMed / Health</button>
+                    <button class="btn btn-search-item btn-outline-light" onclick="go('dimensions')">Dimensions.ai</button>
+                </div>
+                <div id="ref-library" class="mt-4"></div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-ai">
+                <div class="widget">
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="ai-toggle" checked onchange="save()">
+                        <label class="form-check-label x-small fw-bold" for="ai-toggle">Sugestões de IA Ativas</label>
+                    </div>
+                    <h6 class="x-small fw-bold text-info uppercase mt-3 mb-1">Fórmulas LaTeX (AHP/SIG)</h6>
+                    <div class="latex-guide">
+                        <div onclick="copyL('\\lambda_{max}')" style="cursor:pointer">• Lambda Max</div>
+                        <div onclick="copyL('CI = \\frac{\\lambda_{max}-n}{n-1}')" style="cursor:pointer">• Índice de Consistência</div>
+                        <div onclick="copyL('\\sum w_i = 1')" style="cursor:pointer">• Somatório de Pesos</div>
+                    </div>
+                </div>
+                <div class="ai-chat-box" id="ai-chat">
+                    <div class="text-info small">[IA]: Pronto para brainstormings de Metodologia e Discussão. Como posso ajudar?</div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ai-msg" class="form-control form-control-sm bg-dark text-white" placeholder="Mensagem...">
+                    <button class="btn btn-info btn-sm" onclick="askAI()"><i class="fas fa-paper-plane"></i></button>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div class="p-3 border-top border-secondary">
+            <button class="btn btn-sm btn-primary w-100 fw-bold" onclick="exportDoc()">EXPORTAR WORD FINAL</button>
+        </div>
+    </aside>
+
+    <main id="viewport">
+        <div id="toolbar-container"></div>
+        <div id="paper-canvas">
+            <div id="editor"></div>
+        </div>
+    </main>
 </div>
 
-<script src="assets/js/psa-engine.js"></script>
-<script src="assets/js/ahp-engine.js"></script>
-<script src="assets/js/manual-engine.js"></script>
-<script src="assets/js/gov-admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // 1. Core Logic & Ethics
+    function acceptEthics() {
+        document.getElementById('ethics-overlay').style.display = 'none';
+        document.getElementById('app-ui').classList.add('app-active');
+        localStorage.setItem('omni_ethics_v12_4', 'true');
+    }
+
+    function toggleAdmin() {
+        if(prompt("Senha do Criador:") === "IPOJUCAPRO") {
+            document.getElementById('master-body').classList.add('is-admin');
+            localStorage.setItem('omni_admin_v12_4', 'true');
+        }
+    }
+
+    // 2. Editor Setup
+    var quill = new Quill('#editor', {
+        theme: 'snow',
+        modules: {
+            formula: true,
+            toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'formula'], [{ 'list': 'ordered'}, { 'list': 'bullet' }], [{ 'align': [] }], ['image', 'link', 'clean']]
+        }
+    });
+    document.getElementById('toolbar-container').appendChild(document.querySelector('.ql-toolbar'));
+
+    // 3. Search & IA Integration
+    function go(b) {
+        const q = document.getElementById('q').value;
+        const urls = {
+            scholar: `https://scholar.google.com.br/scholar?q=${q}`,
+            scielo: `https://search.scielo.org/?q=${q}`,
+            capes: `https://www-periodicos-capes-gov-br.ezl.periodicos.capes.gov.br/index.php/consulta-acervo.html?q=${q}`,
+            bdtd: `https://bdtd.ibict.br/vufind/Search/Results?lookfor=${q}`,
+            ana: `https://dadosabertos.ana.gov.br/`,
+            perplexity: `https://www.perplexity.ai/search?q=${q}`,
+            pubmed: `https://pubmed.ncbi.nlm.nih.gov/?term=${q}`,
+            dimensions: `https://app.dimensions.ai/discover/publication?search_text=${q}`
+        };
+        window.open(urls[b], '_blank');
+    }
+
+    function askAI() {
+        if(!app.aiEnabled) return alert("IA Desativada nas configurações.");
+        const box = document.getElementById('ai-chat');
+        const msg = document.getElementById('ai-msg').value;
+        box.innerHTML += `<div class='text-white-50 mt-2'>Você: ${msg}</div>`;
+        setTimeout(() => {
+            box.innerHTML += `<div class='text-info mt-1'>[IA]: Analisando contexto... Para sua dissertação na Bacia do Ipojuca, recomendo focar na normalização dos critérios AHP...</div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 700);
+        document.getElementById('ai-msg').value = "";
+    }
+
+    // 4. Data Persistence
+    const DB = 'omni_v12_4_final';
+    let app = { site: "OmniEditor Platinum", html: "", deadline: "", tasks: [], aiEnabled: true, refs: [] };
+
+    function save() { 
+        app.html = quill.root.innerHTML; 
+        app.deadline = document.getElementById('deadline').value;
+        app.aiEnabled = document.getElementById('ai-toggle').checked;
+        localStorage.setItem(DB, JSON.stringify(app)); 
+    }
+
+    function load() {
+        if(localStorage.getItem('omni_ethics_v12_4') === 'true') acceptEthics();
+        if(localStorage.getItem('omni_admin_v12_4') === 'true') document.getElementById('master-body').classList.add('is-admin');
+        const d = JSON.parse(localStorage.getItem(DB));
+        if(d) {
+            app = d; quill.root.innerHTML = d.html || "";
+            document.getElementById('deadline').value = d.deadline || "";
+            document.getElementById('ai-toggle').checked = d.aiEnabled;
+            renderTasks(); if(d.deadline) startTimer(d.deadline);
+        }
+    }
+
+    // 5. Utility Functions
+    function injectMetadata() {
+        const inst = document.getElementById('meta-inst').value.toUpperCase();
+        const title = document.getElementById('meta-title').value.toUpperCase();
+        const author = document.getElementById('meta-author').value.toUpperCase();
+        const capa = `<div style="text-align:center; font-weight:bold;">${inst}</div><br><br><br><div style="text-align:center; font-weight:bold;">${author}</div><br><br><br><br><br><div style="text-align:center; font-weight:bold; font-size:14pt;">${title}</div><br><br><br><br><br><div style="text-align:center; margin-top:10cm;">RECIFE<br>2026</div>`;
+        quill.clipboard.dangerouslyPasteHTML(0, capa);
+        save();
+    }
+
+    function processDocx() {
+        const file = document.getElementById('import-docx').files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            mammoth.convertToHtml({arrayBuffer: e.target.result}).then(function(result) {
+                quill.clipboard.dangerouslyPasteHTML(0, result.value);
+                quill.formatText(0, quill.getLength(), { 'font': 'arial', 'size': '12pt', 'line-height': '1.5' });
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function startTimer(t) {
+        clearInterval(window.itv);
+        window.itv = setInterval(() => {
+            const diff = new Date(t) - new Date();
+            const disp = document.getElementById('timer');
+            if(diff < 0) { disp.innerText = "ENTREGA!"; return; }
+            const h = Math.floor(diff/3600000); const m = Math.floor((diff%3600000)/60000); const s = Math.floor((diff%60000)/1000);
+            disp.innerText = `${h}:${m}:${s}`.replace(/\b\d\b/g, "0$&");
+        }, 1000);
+    }
+
+    function exportDoc() {
+        const html = `<html><head><meta charset="utf-8"><style>body{font-family:Arial; font-size:12pt; margin:3cm 2cm 2cm 3cm; text-align:justify;}</style></head><body>${quill.root.innerHTML}</body></html>`;
+        const blob = new Blob([html], { type: 'application/msword' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Manuscrito_Final_ABNT.doc'; a.click();
+    }
+
+    function addTask() {
+        const val = prompt("Nova Meta:"); if(!val) return;
+        app.tasks.push({ id: Date.now(), text: val, done: false });
+        renderTasks(); save();
+    }
+    function renderTasks() {
+        document.getElementById('task-list').innerHTML = app.tasks.map(t => `<div class="widget p-2 mb-1 x-small d-flex justify-content-between align-items-center">
+            <div onclick="toggleTask(${t.id})" style="cursor:pointer">
+                <input type="checkbox" ${t.done ? 'checked' : ''} ${!localStorage.getItem('omni_admin_v12_4') ? 'disabled' : ''}>
+                <span style="${t.done ? 'text-decoration:line-through; color:gray' : ''}">${t.text}</span>
+            </div>
+        </div>`).join('');
+    }
+    function toggleTask(id) { const t = app.tasks.find(x => x.id === id); t.done = !t.done; renderTasks(); save(); }
+    function copyL(c) { navigator.clipboard.writeText(c); alert("Código LaTeX Copiado!"); }
+    function resetDB() { if(confirm("Apagar tudo?")) { localStorage.clear(); location.reload(); } }
+
+    window.onload = load;
+    quill.on('text-change', save);
+</script>
 </body>
 </html>
