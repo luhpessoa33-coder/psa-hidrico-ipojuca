@@ -1,0 +1,17 @@
+/* Design Governamental Industrial */
+:root { --psa-green: #198754; --psa-blue: #0d6efd; }
+body { font-family: 'Inter', -apple-system, sans-serif; background-color: #f4f7f6; }
+
+.navbar { background: linear-gradient(90deg, #198754 0%, #145a32 100%) !important; }
+#map { border: 2px solid #ddd; transition: 0.3s; }
+#map:hover { border-color: var(--psa-green); }
+
+/* Widgets Editáveis */
+.widget-admin { border-left: 4px solid #ffc107; background: #fff; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+
+/* Estilo ABNT para Manuais */
+.abnt-format { padding: 3cm 2cm 2cm 3cm; background: white; font-family: 'Times New Roman', serif; line-height: 1.5; text-align: justify; }
+
+.nav-pills .nav-link.active { background-color: var(--psa-green) !important; box-shadow: 0 4px 10px rgba(25, 135, 84, 0.3); }
+.animate-pulse { animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
