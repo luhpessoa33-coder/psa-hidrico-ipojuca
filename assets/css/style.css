@@ -1,17 +1,47 @@
-/* Design Governamental Industrial */
-:root { --psa-green: #198754; --psa-blue: #0d6efd; }
-body { font-family: 'Inter', -apple-system, sans-serif; background-color: #f4f7f6; }
+/* PSAH-PE Ipojuca - Núcleo de Estilo Industrial */
+:root {
+    --gov-green: #198754;
+    --gov-dark-green: #145a32;
+    --gov-blue: #0d6efd;
+    --gov-warning: #ffc107;
+    --paper-bg: #f4f7f6;
+    --abnt-font: 'Times New Roman', Times, serif;
+}
 
-.navbar { background: linear-gradient(90deg, #198754 0%, #145a32 100%) !important; }
-#map { border: 2px solid #ddd; transition: 0.3s; }
-#map:hover { border-color: var(--psa-green); }
+body { font-family: 'Inter', sans-serif; background-color: var(--paper-bg); color: #333; }
 
-/* Widgets Editáveis */
-.widget-admin { border-left: 4px solid #ffc107; background: #fff; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+/* Navbar com Gradiente Governamental */
+.navbar { background: linear-gradient(90deg, var(--gov-green) 0%, var(--gov-dark-green) 100%) !important; border-bottom: 3px solid var(--gov-warning); }
 
-/* Estilo ABNT para Manuais */
-.abnt-format { padding: 3cm 2cm 2cm 3cm; background: white; font-family: 'Times New Roman', serif; line-height: 1.5; text-align: justify; }
+/* Interface do Mapa SIG Profissional */
+#map { border: 2px solid #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.3s; }
+#map:hover { border-color: var(--gov-green); }
 
-.nav-pills .nav-link.active { background-color: var(--psa-green) !important; box-shadow: 0 4px 10px rgba(25, 135, 84, 0.3); }
-.animate-pulse { animation: pulse 2s infinite; }
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+/* Widgets de Anúncios e Estatísticas */
+.widget-card { background: white; border-radius: 10px; border-left: 5px solid var(--gov-warning); box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; transition: 0.3s; }
+.widget-card:hover { transform: translateX(5px); }
+
+/* Simulador de Página ABNT NBR 14724 */
+.abnt-page {
+    background: white;
+    width: 21cm;
+    min-height: 29.7cm;
+    margin: 20px auto;
+    padding: 3cm 2cm 2cm 3cm; /* Margens: Esq/Sup 3cm | Dir/Inf 2cm */
+    box-shadow: 0 0 40px rgba(0,0,0,0.2);
+    font-family: var(--abnt-font);
+    font-size: 12pt;
+    line-height: 1.5;
+    text-align: justify;
+    color: #000;
+}
+
+/* Tabelas AHP (Saaty) */
+.saaty-table input { width: 60px; text-align: center; border: 1px solid #ddd; border-radius: 4px; }
+.saaty-table th { background: var(--gov-green); color: white; font-size: 0.8rem; }
+
+/* Animações e Alertas */
+.animate-pulse-warning { animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+.badge-master { background: var(--gov-warning); color: #000; font-weight: bold; }
