@@ -1,4 +1,4 @@
-name: Deploy PSA Hídrico Ipojuca Pro
+name: Deploy PSAH-PE
 on:
   push:
     branches: ["main"]
@@ -6,9 +6,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-concurrency:
-  group: "pages-psa"
-  cancel-in-progress: true
 jobs:
   deploy:
     environment:
