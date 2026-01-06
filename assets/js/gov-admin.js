@@ -1,7 +1,7 @@
 /**
  * assets/js/gov-admin.js
  * SISTEMA DE GOVERNANÇA E GESTÃO MASTER - PSAH-PE IPOJUCA
- * Desenvolvido para: Luana Pessoa (Master)
+ * Desenvolvido para: Luana Pessoa Genuino (Master)
  */
 
 // 1. CONFIGURAÇÕES DE ACESSO E ESTADO INICIAL
