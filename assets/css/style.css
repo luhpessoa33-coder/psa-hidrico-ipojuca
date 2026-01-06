@@ -1,47 +1,43 @@
-/* PSAH-PE Ipojuca - Núcleo de Estilo Industrial */
+/* PSAH-PE Ipojuca - Núcleo de Design v6.0 */
 :root {
-    --gov-green: #198754;
-    --gov-dark-green: #145a32;
-    --gov-blue: #0d6efd;
-    --gov-warning: #ffc107;
-    --paper-bg: #f4f7f6;
-    --abnt-font: 'Times New Roman', Times, serif;
+    --primary: #198754;
+    --accent: #ffc107;
+    --dark: #121212;
 }
 
-body { font-family: 'Inter', sans-serif; background-color: var(--paper-bg); color: #333; }
+body { font-family: 'Inter', sans-serif; background-color: #f1f3f5; }
+.navbar { background-color: var(--primary) !important; border-bottom: 4px solid var(--accent); }
 
-/* Navbar com Gradiente Governamental */
-.navbar { background: linear-gradient(90deg, var(--gov-green) 0%, var(--gov-dark-green) 100%) !important; border-bottom: 3px solid var(--gov-warning); }
-
-/* Interface do Mapa SIG Profissional */
-#map { border: 2px solid #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.3s; }
-#map:hover { border-color: var(--gov-green); }
-
-/* Widgets de Anúncios e Estatísticas */
-.widget-card { background: white; border-radius: 10px; border-left: 5px solid var(--gov-warning); box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; transition: 0.3s; }
-.widget-card:hover { transform: translateX(5px); }
-
-/* Simulador de Página ABNT NBR 14724 */
+/* Interface de Redação ABNT */
 .abnt-page {
     background: white;
     width: 21cm;
     min-height: 29.7cm;
-    margin: 20px auto;
-    padding: 3cm 2cm 2cm 3cm; /* Margens: Esq/Sup 3cm | Dir/Inf 2cm */
-    box-shadow: 0 0 40px rgba(0,0,0,0.2);
-    font-family: var(--abnt-font);
+    margin: 10px auto;
+    padding: 3cm 2cm 2cm 3cm; /* Margens Oficiais NBR 14724 */
+    box-shadow: 0 0 40px rgba(0,0,0,0.15);
+    font-family: 'Times New Roman', serif;
     font-size: 12pt;
-    line-height: 1.5;
     text-align: justify;
+    line-height: 1.5;
     color: #000;
 }
 
-/* Tabelas AHP (Saaty) */
-.saaty-table input { width: 60px; text-align: center; border: 1px solid #ddd; border-radius: 4px; }
-.saaty-table th { background: var(--gov-green); color: white; font-size: 0.8rem; }
+#map { border-radius: 12px; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.nav-pills .nav-link { font-weight: 600; color: #495057; }
+.nav-pills .nav-link.active { background-color: var(--primary) !important; box-shadow: 0 4px 10px rgba(25, 135, 84, 0.3); }
 
-/* Animações e Alertas */
-.animate-pulse-warning { animation: pulse 2s infinite; }
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+.widget-card { border-left: 5px solid var(--accent); transition: 0.3s; }
+.x-small { font-size: 0.65rem; }
+.btn-xxs { padding: 1px 5px; font-size: 0.65rem; }
+.btn-xs { padding: 3px 8px; font-size: 0.75rem; }
 
-.badge-master { background: var(--gov-warning); color: #000; font-weight: bold; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+.animate-pulse { animation: pulse 2s infinite; }
+
+/* CSS para Exportação / Impressão */
+@media print {
+    .navbar, aside, .nav, .col-md-4, .btn, hr { display: none !important; }
+    .col-md-8 { width: 100% !important; }
+    .abnt-page { box-shadow: none; border: none; margin: 0; padding: 0; }
+}ont-weight: bold; }
