@@ -1,43 +1,48 @@
-/* PSAH-PE Ipojuca - Núcleo de Design v6.0 */
+/* PSAH-PE Ipojuca - Design System v6.0 */
 :root {
     --primary: #198754;
     --accent: #ffc107;
     --dark: #121212;
+    --abnt-margin-top: 3cm;
+    --abnt-margin-left: 3cm;
 }
 
-body { font-family: 'Inter', sans-serif; background-color: #f1f3f5; }
+body { font-family: 'Inter', -apple-system, sans-serif; background-color: #f1f3f5; color: #333; }
 .navbar { background-color: var(--primary) !important; border-bottom: 4px solid var(--accent); }
 
-/* Interface de Redação ABNT */
+/* Interface de Simulação de Folha A4 NBR 14724 */
 .abnt-page {
     background: white;
     width: 21cm;
     min-height: 29.7cm;
     margin: 10px auto;
-    padding: 3cm 2cm 2cm 3cm; /* Margens Oficiais NBR 14724 */
-    box-shadow: 0 0 40px rgba(0,0,0,0.15);
-    font-family: 'Times New Roman', serif;
+    padding: var(--abnt-margin-top) 2cm 2cm var(--abnt-margin-left);
+    box-shadow: 0 0 50px rgba(0,0,0,0.2);
+    font-family: 'Times New Roman', Times, serif;
     font-size: 12pt;
     text-align: justify;
     line-height: 1.5;
     color: #000;
 }
 
-#map { border-radius: 12px; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-.nav-pills .nav-link { font-weight: 600; color: #495057; }
-.nav-pills .nav-link.active { background-color: var(--primary) !important; box-shadow: 0 4px 10px rgba(25, 135, 84, 0.3); }
+#map { border-radius: 12px; border: 3px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+.nav-pills .nav-link { font-weight: 700; color: #495057; border-radius: 8px; margin-right: 5px; }
+.nav-pills .nav-link.active { background-color: var(--primary) !important; box-shadow: 0 5px 15px rgba(25, 135, 84, 0.4); }
 
-.widget-card { border-left: 5px solid var(--accent); transition: 0.3s; }
+.widget-card { border-left: 6px solid var(--accent); border-radius: 10px; }
 .x-small { font-size: 0.65rem; }
-.btn-xxs { padding: 1px 5px; font-size: 0.65rem; }
-.btn-xs { padding: 3px 8px; font-size: 0.75rem; }
+.btn-xxs { padding: 1px 6px; font-size: 0.65rem; }
+.btn-xs { padding: 4px 10px; font-size: 0.75rem; }
 
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-.animate-pulse { animation: pulse 2s infinite; }
+.shadow-inner { box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); }
 
-/* CSS para Exportação / Impressão */
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+.animate-pulse { animation: pulse 2.5s infinite; }
+
+/* CSS Especial para Impressão de Relatórios */
 @media print {
-    .navbar, aside, .nav, .col-md-4, .btn, hr { display: none !important; }
-    .col-md-8 { width: 100% !important; }
+    .navbar, aside, .nav, .col-md-4, .btn, hr, .raster-calc { display: none !important; }
+    .col-md-8, .col-lg-10 { width: 100% !important; margin: 0; padding: 0; }
     .abnt-page { box-shadow: none; border: none; margin: 0; padding: 0; }
-}ont-weight: bold; }
+    body { background: white; }
+}
