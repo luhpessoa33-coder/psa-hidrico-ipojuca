@@ -1,21 +1,22 @@
 /**
- * Motor de Governança Documental e IA v6.0
+ * Motor IA Documental e ABNT v6.0 (Unifica manual-formatter)
  */
 const MANUAL_ENGINE = {
-    campos: {
-        manual: ["Título Oficial", "Responsável Técnico", "CREA/CRBio", "Resumo Metodológico", "Metas PSA"],
-        relatorio: ["Projeto Ipojuca PSA", "Número ART", "Coordenadas SIRGAS", "Análise de Sensibilidade", "Conclusão Ambiental"]
+    secoes: {
+        manual: ["Título do Manual*", "Responsável Técnico (CREA)*", "Metodologia de Priorização*", "Resultados Geospaciais*", "Normas de Execução"],
+        relatorio: ["Projeto PSA Ipojuca*", "Nº ART/Documento*", "Coordenadas SIRGAS 2000*", "Análise de Impacto*", "Conclusão Ambiental"]
     },
 
     setupTemplate() {
         const t = document.getElementById('docType').value;
         const container = document.getElementById('aiInputs');
-        container.innerHTML = this.campos[t].map(c => `
-            <div class="mb-2">
-                <label class="x-small fw-bold text-uppercase text-muted">${c} *</label>
-                <textarea id="f_${c.replace(/\s/g,'')}" class="form-control form-control-sm" rows="2" oninput="MANUAL_ENGINE.sync()"></textarea>
-            </div>
-        `).join('');
+        container.innerHTML = `<h6>Preenchimento Obrigatório</h6>` + 
+            this.secoes[t].map(c => `
+                <div class="mb-3">
+                    <label class="x-small fw-bold text-uppercase text-muted">${c}</label>
+                    <textarea id="f_${c.replace(/[* ]/g,'')}" class="form-control form-control-sm shadow-inner" rows="3" oninput="MANUAL_ENGINE.sync()"></textarea>
+                </div>
+            `).join('');
         this.sync();
     },
 
@@ -23,17 +24,31 @@ const MANUAL_ENGINE = {
         const preview = document.getElementById('abntPreview');
         const tipo = document.getElementById('docType').value;
         const titulo = document.querySelector('textarea')?.value || "TÍTULO DO DOCUMENTO";
+        const responsavel = document.querySelectorAll('textarea')[1]?.value || "Nome do Responsável";
+        const metodologia = document.querySelectorAll('textarea')[3]?.value || "Aguardando preenchimento ou análise da IA...";
         
         preview.innerHTML = `
-            <div class="text-center fw-bold mb-5">
-                INSTITUTO FEDERAL DE PERNAMBUCO | CAMPUS RECIFE<br>
-                MESTRADO EM GESTÃO AMBIENTAL (MPGA)
+            <div class="text-center mb-5">
+                <h6 class="fw-bold">INSTITUTO FEDERAL DE PERNAMBUCO | CAMPUS RECIFE</h6>
+                <p class="small">MESTRADO PROFISSIONAL EM GESTÃO AMBIENTAL (MPGA)</p>
+                <div style="margin-top: 6cm;">
+                    <h4 class="fw-bold text-uppercase">${titulo}</h4>
+                </div>
+                <div style="margin-top: 8cm;">
+                    <p class="mb-1"><strong>Responsável:</strong> ${responsavel}</p>
+                    <p class="small mt-5">IPOJUCA - PERNAMBUCO<br>2026</p>
+                </div>
             </div>
-            <h4 class="text-center text-uppercase border-bottom pb-4">${titulo}</h4>
-            <div class="mt-5">
-                <p><strong>NATUREZA:</strong> ${tipo.toUpperCase()} DE PSA HÍDRICO</p>
-                <p class="mt-4 text-justify">Este produto técnico constitui a base metológica para a implementação de Programas de Pagamentos por Serviços Ambientais na Bacia do Rio Ipojuca.</p>
-                <div class="p-4 border bg-light mt-4 italic">${document.querySelectorAll('textarea')[3]?.value || 'Aguardando processamento de texto...'}</div>
+            <div style="page-break-after: always; height: 1px;"></div>
+            <div class="mt-4">
+                <h5 class="fw-bold text-uppercase mb-4">1. INTRODUÇÃO E OBJETIVO</h5>
+                <p>Este documento constitui produto técnico de suporte à decisão para implementação de PSA Hídrico na Bacia do Rio Ipojuca, sob o tipo <strong>${tipo.toUpperCase()}</strong>.</p>
+                <h5 class="fw-bold text-uppercase mt-5 mb-4">2. DESENVOLVIMENTO TÉCNICO</h5>
+                <div class="p-3 border-start border-4 bg-light shadow-inner">${metodologia}</div>
+            </div>
+            <div class="mt-5 pt-5 text-center">
+                <div style="width: 250px; border-top: 1px solid #000; margin: 4cm auto 0 auto;"></div>
+                <p class="small">Assinatura do Responsável Técnico</p>
             </div>`;
     },
 
@@ -41,26 +56,26 @@ const MANUAL_ENGINE = {
         const file = event.target.files[0];
         const reader = new FileReader();
         reader.onload = (e) => {
-            alert("IA Analisando Arquivo: Organizando conteúdo em seções ABNT...");
+            alert("⚙️ IA Iniciando Análise de Conteúdo...");
             const texto = e.target.result;
-            // Simulação de organização por IA: Injetando no campo de metodologia
-            const campo = document.querySelectorAll('textarea')[3];
-            if(campo) campo.value = texto.substring(0, 500) + "... [Organizado via IA]";
-            this.sync();
+            // Simulação de IA organizando o texto e injetando na seção 3 (Metodologia/Impacto)
+            const campoAlvo = document.querySelectorAll('textarea')[3];
+            if(campoAlvo) {
+                campoAlvo.value = texto.substring(0, 1000) + "... [CONTEÚDO ANALISADO E ORGANIZADO PELA IA PSA-IPOJUCA]";
+                this.sync();
+            }
         };
         reader.readAsText(file);
     },
 
     exportPDF() {
-        if (!localStorage.getItem('psa_session_master')) return alert("Erro: Somente usuários MASTER podem exportar documentos.");
+        if (!localStorage.getItem('psa_session_master')) return alert("Ação bloqueada: Apenas usuários MASTER podem emitir documentos finais.");
         window.print();
     },
 
     openGoogleDocs() {
-        // Link para template ABNT público para o usuário copiar
-        const templateURL = "https://docs.google.com/document/d/1B0X1x_VnScl8Gv8O7p_Xm-x7l_wP5T6k_Fq7oFk_W8o/copy";
-        window.open(templateURL, '_blank');
-        alert("O sistema abriu um modelo ABNT no seu Google Docs. Copie e cole os textos gerados pela IA acima.");
+        window.open("https://docs.google.com/document/d/1B0X1x_VnScl8Gv8O7p_Xm-x7l_wP5T6k_Fq7oFk_W8o/copy", '_blank');
+        alert("O sistema abriu um modelo ABNT no Google Docs. Transfira o conteúdo gerado pela IA para edição final.");
     }
 };
 
